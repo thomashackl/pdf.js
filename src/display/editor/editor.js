@@ -30,6 +30,7 @@ import {
 } from "../../shared/util.js";
 import { noContextMenu, stopEvent } from "../display_utils.js";
 import { AltText } from "./alt_text.js";
+import { CommentText } from "./comment_text.js";
 import { EditorToolbar } from "./toolbar.js";
 import { TouchManager } from "../touch_manager.js";
 
@@ -48,9 +49,13 @@ import { TouchManager } from "../touch_manager.js";
 class AnnotationEditor {
   #accessibilityData = null;
 
+  #commentTextData = null;
+
   #allResizerDivs = null;
 
   #altText = null;
+
+  #commentText = null;
 
   #disabled = false;
 
@@ -1060,6 +1065,9 @@ class AnnotationEditor {
     if (this.#altText) {
       await this._editToolbar.addAltText(this.#altText);
     }
+    if (this.#commentText) {
+      await this._editToolbar.addCommentText(this.#commentText);
+    }
 
     return this._editToolbar;
   }
@@ -1102,6 +1110,21 @@ class AnnotationEditor {
     await this.addEditToolbar();
   }
 
+  async addCommentTextButton() {
+    if (this.#commentText) {
+      return;
+    }
+    CommentText.initialize(AnnotationEditor._l10n);
+    this.#commentText = new CommentText(this);
+    if (this.#commentTextData) {
+      this.#commentText.data = this.#commentTextData;
+      this.#commentTextData = null;
+    }
+    // TODO We would need to refactor addEditToolbar() if we wanted to have
+    //  both alt text and comment text on the same editor toolbar.
+    await this.addEditToolbar();
+  }
+
   get altTextData() {
     return this.#altText?.data;
   }
@@ -1114,6 +1137,21 @@ class AnnotationEditor {
       return;
     }
     this.#altText.data = data;
+  }
+
+  get commentTextData() {
+    return this.#commentText?.data;
+  }
+
+  set commentTextData(data) {
+    if (!this.#commentText) {
+      return;
+    }
+    this.#commentText.data = data;
+  }
+
+  serializeCommentText(isForCopying) {
+    return this.#commentText?.serialize(isForCopying);
   }
 
   get guessedAltText() {
@@ -1618,6 +1656,12 @@ class AnnotationEditor {
     editor.rotation = data.rotation;
     editor.#accessibilityData = data.accessibilityData;
     editor._isCopy = data.isCopy || false;
+    if (data.contentsObj) {
+      editor.#commentTextData = {
+        commentText: data.contentsObj.str,
+        author: data.titleObj?.str ?? "Unknown author",
+      };
+    }
 
     const [pageWidth, pageHeight] = editor.pageDimensions;
     const [x, y, width, height] = editor.getRectInCurrentCoords(
@@ -1847,6 +1891,7 @@ class AnnotationEditor {
     }
     this._editToolbar?.show();
     this.#altText?.toggleAltTextBadge(false);
+    this.#commentText?.toggleAltTextBadge(false);
   }
 
   /**
@@ -1864,6 +1909,7 @@ class AnnotationEditor {
     }
     this._editToolbar?.hide();
     this.#altText?.toggleAltTextBadge(true);
+    this.#commentText?.toggleAltTextBadge(true);
   }
 
   /**

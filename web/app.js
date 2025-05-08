@@ -71,6 +71,7 @@ import { LinkTarget, PDFLinkService } from "./pdf_link_service.js";
 import { AltTextManager } from "web-alt_text_manager";
 import { AnnotationEditorParams } from "web-annotation_editor_params";
 import { CaretBrowsingMode } from "./caret_browsing.js";
+import { CommentTextManager } from "./comment_text_manager.js";
 import { DownloadManager } from "web-download_manager";
 import { EditorUndoBar } from "./editor_undo_bar.js";
 import { OverlayManager } from "./overlay_manager.js";
@@ -483,6 +484,15 @@ const PDFViewerApplication = {
           )
         : null;
 
+    const commentTextManager = appConfig.commentTextDialog
+      ? new CommentTextManager(
+        appConfig.commentTextDialog,
+        container,
+        this.overlayManager,
+        eventBus
+      )
+      : null;
+
     const enableHWA = AppOptions.get("enableHWA"),
       maxCanvasPixels = AppOptions.get("maxCanvasPixels"),
       maxCanvasDim = AppOptions.get("maxCanvasDim");
@@ -496,6 +506,7 @@ const PDFViewerApplication = {
       altTextManager,
       signatureManager,
       editorUndoBar: this.editorUndoBar,
+      commentTextManager,
       findController,
       scriptingManager:
         AppOptions.get("enableScripting") && pdfScriptingManager,
@@ -1615,12 +1626,6 @@ const PDFViewerApplication = {
     this._contentDispositionFilename ??= contentDispositionFilename;
     this._contentLength ??= contentLength; // See `getDownloadInfo`-call above.
 
-    // Provides some basic debug information
-    console.log(
-      `PDF ${pdfDocument.fingerprints[0]} [${info.PDFFormatVersion} ` +
-        `${(info.Producer || "-").trim()} / ${(info.Creator || "-").trim()}] ` +
-        `(PDF.js: ${version || "?"} [${build || "?"}])`
-    );
     let pdfTitle = info.Title;
 
     const metadataTitle = metadata?.get("dc:title");

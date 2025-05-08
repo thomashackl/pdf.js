@@ -850,7 +850,7 @@ class StampEditor extends AnnotationEditor {
     if (!decorative && altText) {
       serialized.accessibilityData = { type: "Figure", alt: altText };
     }
-    if (this.annotationElementId) {
+    if (this._initialData) {
       const changes = this.#hasElementChanged(serialized);
       if (changes.isSame) {
         // Nothing has been changed.
