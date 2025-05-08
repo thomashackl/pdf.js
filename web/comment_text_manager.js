@@ -194,7 +194,7 @@ class CommentTextManager {
       }
     }
 
-    /*if (top !== null) {
+/*    if (top !== null) {
       dialog.classList.add("positioned");
       if (isLTR) {
         style.left = `${left}px`;
