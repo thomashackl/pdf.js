@@ -2320,7 +2320,7 @@ gulp.task(
 function packageJson() {
   const VERSION = getVersionJSON().version;
 
-  const DIST_NAME = "@thomas.hackl/pdfjs-dist";
+  const DIST_NAME = "@thomas.hackl/pdfjs-studip";
   const DIST_DESCRIPTION = "Generic build of Mozilla's PDF.js library, adjusted for usage in Stud.IP.";
   const DIST_KEYWORDS = ["Mozilla", "pdf", "pdf.js"];
   const DIST_HOMEPAGE = "https://github.com/thomashackl/pdf.js/";
