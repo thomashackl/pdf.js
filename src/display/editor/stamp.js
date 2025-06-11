@@ -687,6 +687,10 @@ class StampEditor extends AnnotationEditor {
     );
   }
 
+  getImageForAltText() {
+    return this.#canvas;
+  }
+
   #serializeBitmap(toUrl) {
     if (toUrl) {
       if (this.#isSvg) {

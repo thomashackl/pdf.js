@@ -1992,6 +1992,13 @@ class AnnotationEditor {
   }
 
   /**
+   * @returns {HTMLElement | null} the element requiring an alt text.
+   */
+  getImageForAltText() {
+    return null;
+  }
+
+  /**
    * Get the div which really contains the displayed content.
    * @returns {HTMLDivElement | undefined}
    */
